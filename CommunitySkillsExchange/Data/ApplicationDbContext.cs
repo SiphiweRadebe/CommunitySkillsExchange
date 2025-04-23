@@ -64,6 +64,25 @@ namespace CommunitySkillsExchange.Data
                 .WithMany(u => u.ReviewsReceived)
                 .HasForeignKey(r => r.ReviewedUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<ApplicationUser>()
+        .Property(u => u.Rating)
+        .HasPrecision(3, 2); // Example: max 9.99
+
+            modelBuilder.Entity<SkillOffer>()
+                .Property(s => s.Latitude)
+                .HasPrecision(9, 6); // GPS-style precision
+
+            modelBuilder.Entity<SkillOffer>()
+                .Property(s => s.Longitude)
+                .HasPrecision(9, 6);
+
+            modelBuilder.Entity<SkillRequest>()
+                .Property(s => s.Latitude)
+                .HasPrecision(9, 6);
+
+            modelBuilder.Entity<SkillRequest>()
+                .Property(s => s.Longitude)
+                .HasPrecision(9, 6);
         }
     }
 }
