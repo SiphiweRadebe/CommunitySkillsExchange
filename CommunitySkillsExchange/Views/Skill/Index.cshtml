@@ -1,0 +1,105 @@
+﻿@model IEnumerable<SkillViewModel>
+
+@{
+    ViewData["Title"] = "Browse Skills";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>@ViewData["Title"]</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add Your Skill
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form method="get" class="d-flex">
+            <input type="text" name="searchTerm" class="form-control me-2"
+                   placeholder="Search skills..." value="@ViewBag.CurrentSearchTerm">
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="d-flex justify-content-end">
+            <div class="dropdown me-2">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                        id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    @(ViewBag.CurrentCategory ?? "All Categories")
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <li><a class="dropdown-item" href="@Url.Action("Index", new { category = "" })">All Categories</a></li>
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        <li><a class="dropdown-item" href="@Url.Action("Index", new { category = category })">@category</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="@Url.Action("Index", new { sort = "date" })"
+                   class="btn btn-outline-secondary @(ViewBag.CurrentSort == "date" ? "active" : "")">
+                    <i class="bi bi-calendar"></i> Newest
+                </a>
+                <a href="@Url.Action("Index", new { sort = "rating" })"
+                   class="btn btn-outline-secondary @(ViewBag.CurrentSort == "rating" ? "active" : "")">
+                    <i class="bi bi-star"></i> Top Rated
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No skills found matching your criteria. Try adjusting your search or be the first to add a skill in this category!
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var skill in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                        <span class="badge bg-secondary">@skill.Category</span>
+                        <div>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="bi @(i <= skill.AverageRating ? "bi-star-fill" : "bi-star")" style="color: #ffc107;"></i>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@skill.Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <i class="bi bi-person"></i> @skill.UserName
+                        </h6>
+                        <p class="card-text">@skill.Description</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Added on @skill.CreatedDate.ToString("MMM dd, yyyy")</small>
+                        <a asp-action="Details" asp-route-id="@skill.Id" class="btn btn-sm btn-outline-primary">
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <nav aria-label="Skill pages">
+            <ul class="pagination">
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = i, searchTerm = ViewBag.CurrentSearchTerm, category = ViewBag.CurrentCategory, sort = ViewBag.CurrentSort })">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}

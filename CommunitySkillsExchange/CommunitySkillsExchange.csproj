@@ -19,4 +19,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Account\" />
+    <Folder Include="Views\Request\" />
+    <Folder Include="Views\User\" />
+  </ItemGroup>
+
 </Project>
